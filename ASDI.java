@@ -22,5 +22,63 @@ public class ASDI implements Parser{
       {     "T3",            "",                 "",             "",           "",       "e",        "id",         "",       "e" }
     };
 
+    public ASDI(List<Token> tokens){
+        this.tokens = tokens;
+    }
+
+    @Override
+    public boolean parse() {
+
+        String entrada = "";
+        int j = 0;
+        Stack <String> pila = new Stack <String>();
+        pila.push("$");
+        pila.push("T");
+        pila.push("from");
+        pila.push("D");
+        pila.push("select");
+
+        while( !pila.empty() ){
+              
+
+            if(tokens.get(i).tipo == TipoToken.IDENTIFICADOR )
+                entrada = "id";
+            else 
+                entrada = tokens.get(i).lexema;
+
+
+            if (pila.peek().equals(entrada)){
+                pila.pop();
+                i++;
+            }
+            else if( esTerminal(pila.peek()) ){
+                hayErrores = true;
+                break;
+            }
+            else if( !esTerminal(pila.peek()) && 
+                     TablaAS[buscaNoTerminal(TablaAS, pila.peek() )][buscaTerminal(TablaAS, entrada )].equals("") ){
+                hayErrores = true;
+                break;
+            }else{
+                String[] producciones = TablaAS[buscaNoTerminal(TablaAS, pila.peek() )][buscaTerminal(TablaAS, entrada )].split(" "); 
+                j = producciones.length;
+                pila.pop();
+                while(j>0){
+                    if(!producciones[j-1].equals("e"))
+                        pila.push(producciones[j-1]);
+                    j--;
+                }
+            }
+        }
+
+        if( pila.empty() && tokens.get(i-1).tipo == TipoToken.EOF && !hayErrores){
+            System.out.println("Consulta correcta");
+            return  true;
+        }else {
+            System.out.println("Consulta Incorrecta");
+        }
+        return false;
+    }
+
 }
 
