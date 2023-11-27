@@ -1,6 +1,5 @@
 import java.util.List;
 import java.util.Stack;
-import java.util.Arrays;
 
 public class ASDI implements Parser{
 
@@ -29,9 +28,9 @@ public class ASDI implements Parser{
     @Override
     public boolean parse() {
 
-        String entrada = "";
-        int j = 0;
-        Stack <String> pila = new Stack <String>();
+        String entrada;
+        int j;
+        Stack <String> pila = new Stack<>();
         pila.push("$");
         pila.push("T");
         pila.push("from");
@@ -55,8 +54,8 @@ public class ASDI implements Parser{
                 hayErrores = true;
                 break;
             }
-            else if( !esTerminal(pila.peek()) && 
-                     TablaAS[buscaNoTerminal(TablaAS, pila.peek() )][buscaTerminal(TablaAS, entrada )].equals("") ){
+            else if( !esTerminal(pila.peek()) &&
+                    TablaAS[buscaNoTerminal(TablaAS, pila.peek())][buscaTerminal(TablaAS, entrada)].isEmpty()){
                 hayErrores = true;
                 break;
             }else{
@@ -80,5 +79,30 @@ public class ASDI implements Parser{
         return false;
     }
 
+    private boolean esTerminal(String tope){
+        return tope.equals("id") || tope.equals("select") || tope.equals("from") || tope.equals("distinct") || tope.equals(",") || tope.equals(".") || tope.equals("*");
+    }
+
+    private int buscaNoTerminal(String[][] tablaAS, String noTerminal){
+        int l= tablaAS.length;
+        for(int i=1; i<l; i++){
+            if(tablaAS[i][0].equals(noTerminal)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int buscaTerminal(String[][] tablaAS, String terminal){
+        int l= tablaAS[0].length;
+        for(int i=1; i<l; i++){
+            if(tablaAS[0][i].equals(terminal)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }
+
 
